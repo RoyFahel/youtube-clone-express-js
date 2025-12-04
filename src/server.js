@@ -52,9 +52,9 @@ app.use(errorHandler);
 // ------------------
 // Normalize and validate port
 function normalizePort(val) {
-  if (!val || typeof val !== 'string') return 5000;
+  if (!val || typeof val !== 'string') return 8080;
   const port = parseInt(val, 10);
-  if (isNaN(port) || port < 0 || port > 65535) return 5000;
+  if (isNaN(port) || port < 0 || port > 65535) return 8080;
   return port;
 }
 
@@ -65,4 +65,5 @@ const PORT = normalizePort(process.env.PORT);
 app.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
 });
+
 
