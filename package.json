@@ -9,7 +9,7 @@
   "author": "RoyF",
   "license": "ISC",
   "type": "commonjs",
-  "description": "",
+  "description": "youtube apis clone using express",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.7.0",
@@ -20,5 +20,13 @@
     "mongoose": "^8.18.2",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "multer": "^2.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoyFahel/youtube-clone-express-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RoyFahel/youtube-clone-express-js/issues"
+  },
+  "homepage": "https://github.com/RoyFahel/youtube-clone-express-js#readme"
 }
