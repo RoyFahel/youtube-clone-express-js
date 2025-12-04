@@ -1,7 +1,18 @@
 const path = require('path');
-// Load .env from project root (one-time at top)
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 
+// ------------------
+// Load .env
+console.log('🔹 Loading .env file...');
+try {
+  require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+  console.log('✅ .env loaded successfully');
+} catch (err) {
+  console.error('❌ Failed to load .env:', err);
+}
+
+// ------------------
+// Require dependencies
+console.log('🔹 Loading dependencies...');
 const express = require('express');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
@@ -15,18 +26,35 @@ const playlistRouter = require('./routes/playlist.routes');
 const commentRouter = require('./routes/comment.routes');
 const likesRouter = require('./routes/like.routes');
 
-const app = express();
-
-// Connect to MongoDB
-connectDB();
-
-// Middlewares
-app.use(express.json());
-app.use(cookieParser());
+console.log('✅ Dependencies loaded');
 
 // ------------------
-// Root route (must be before notFound)
+// Initialize app
+const app = express();
+console.log('🔹 Express app initialized');
+
+// ------------------
+// Connect to MongoDB
+console.log('🔹 Connecting to MongoDB...');
+try {
+  connectDB();
+  console.log('✅ MongoDB connection initiated');
+} catch (err) {
+  console.error('❌ MongoDB connection failed:', err);
+}
+
+// ------------------
+// Middlewares
+console.log('🔹 Setting up middlewares...');
+app.use(express.json());
+app.use(cookieParser());
+console.log('✅ Middlewares configured');
+
+// ------------------
+// Root route
+console.log('🔹 Setting up root route...');
 app.get('/', (req, res) => {
+  console.log('🌐 Root route accessed');
   res.send(`
     <h1>✅ API is running</h1>
     <p>Version: v1</p>
@@ -36,6 +64,7 @@ app.get('/', (req, res) => {
 
 // ------------------
 // API routes
+console.log('🔹 Registering API routes...');
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/channels', channelRouter);
 app.use('/api/v1/videos', videoRouter);
@@ -43,30 +72,41 @@ app.use('/api/v1/notifications', notificationRouter);
 app.use('/api/v1/playlists', playlistRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/likes', likesRouter);
+console.log('✅ API routes registered');
 
 // ------------------
 // Error handlers
+console.log('🔹 Setting up error handlers...');
 app.use(notFound);
 app.use(errorHandler);
+console.log('✅ Error handlers set');
 
 // ------------------
 // Normalize and validate port
 function normalizePort(val) {
-  if (!val || typeof val !== 'string') return 8080;
+  console.log('🔹 Normalizing port...');
+  if (!val || typeof val !== 'string') {
+    console.log('⚠️ No PORT env found, using default 5000');
+    return 5000;
+  }
   const port = parseInt(val, 10);
-  if (isNaN(port) || port < 0 || port > 65535) return 8080;
+  if (isNaN(port) || port < 0 || port > 65535) {
+    console.log('⚠️ Invalid PORT env, using default 5000');
+    return 5000;
+  }
+  console.log(`✅ Port normalized to ${port}`);
   return port;
 }
 
-// Use port provided by EB or fallback to 5000
 const PORT = normalizePort(process.env.PORT);
 
+// ------------------
 // Start the server
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
-});
-
-
-
-
-
+console.log(`🔹 Starting server on port ${PORT}...`);
+try {
+  app.listen(PORT, () => {
+    console.log(`✅ Server is running on port ${PORT}`);
+  });
+} catch (err) {
+  console.error('❌ Failed to start server:', err);
+}
