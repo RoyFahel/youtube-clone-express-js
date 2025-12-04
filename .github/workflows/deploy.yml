@@ -46,8 +46,8 @@ jobs:
           AWS_DEFAULT_REGION: eu-north-1
         run: |
           # initialize (non-interactive if credentials available)
-          eb init youtube-clone-express-js --region eu-north-1 --platform "Node.js"
+          eb init youtube-clone-env --region eu-north-1 --platform "Node.js"
           # select the environment (must already exist)
-          eb use youtube-clone-express-js-env
+          eb use Youtube-clone-env-env
           # deploy current source; use --staged if you want to deploy the contents of the build directory
           eb deploy --staged
