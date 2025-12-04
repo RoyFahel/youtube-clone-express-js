@@ -1,9 +1,10 @@
 {
-  "name": "youtube-clone-api",
+  "name": "youtube-clone-express-js",
   "version": "1.0.0",
-  "main": "server.js",
+   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "RoyF",
