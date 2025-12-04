@@ -1,33 +1,53 @@
+name: CI / Deploy to Elastic Beanstalk
+
 on:
   push:
-    branches:
-      - [main]
-  
-  jobs:
-    deploy:
-      runs-on: ubuntu-latest
+    branches: [main]
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-        - name: Set up Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: '18'
-          
-        - name: Install dependencies
-          run: npm install --production
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-        - name: Zip app
-          run: zip -r app.zip .
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-        - name: Deploy to Elastic Beanstalk
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          run: 
-            pip install awsebcli
-            eb init youtube-clone-express-js --region eu-north-1 --platform "Node.js"
-            eb use youtube-clone-express-js-env
-            eb deploy
+      - name: Set up Python (for EB CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install Node dependencies
+        run: npm ci --production
+
+      - name: Zip app (optional)
+        run: zip -r app.zip . -x "node_modules/*" ".git/*"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Install AWS EB CLI (user location) and add to PATH
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --user awsebcli --upgrade
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+
+      - name: Initialize EB app & deploy
+        env:
+          AWS_DEFAULT_REGION: eu-north-1
+        run: |
+          # initialize (non-interactive if credentials available)
+          eb init youtube-clone-express-js --region eu-north-1 --platform "Node.js"
+          # select the environment (must already exist)
+          eb use youtube-clone-express-js-env
+          # deploy current source; use --staged if you want to deploy the contents of the build directory
+          eb deploy --staged
