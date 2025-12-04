@@ -27,11 +27,11 @@ app.use(cookieParser());
 // ------------------
 // Root route (must be before notFound)
 app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'API is running',
-    version: 'v1'
-  });
+  res.send(`
+    <h1>✅ API is running</h1>
+    <p>Version: v1</p>
+    <p>Welcome to the YouTube Clone API!</p>
+  `);
 });
 
 // ------------------
@@ -65,3 +65,4 @@ const PORT = normalizePort(process.env.PORT);
 app.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
 });
+
